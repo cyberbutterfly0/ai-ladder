@@ -1,0 +1,151 @@
+{
+  "total": 12,
+  "perLayer": 3,
+  "passNeed": 2,
+  "items": [
+    {
+      "id": "q1-1",
+      "layer": 1,
+      "kind": "认知",
+      "scene": "DeepSeek、豆包、Kimi、ChatGPT 这几个名字，你——",
+      "options": [
+        { "key": "A", "text": "都能打开用，知道它们各自擅长什么", "level": 3 },
+        { "key": "B", "text": "用过其中一个，能正常对话", "level": 2 },
+        { "key": "C", "text": "听过，但没打开过", "level": 1 },
+        { "key": "D", "text": "第一次听说", "level": 0 }
+      ]
+    },
+    {
+      "id": "q1-2",
+      "layer": 1,
+      "kind": "行为",
+      "scene": "上次有个问题卡住了，你——",
+      "options": [
+        { "key": "A", "text": "直接打开对话框问它，拿到答案就用", "level": 2 },
+        { "key": "B", "text": "先自己想，想不出来再问它", "level": 2 },
+        { "key": "C", "text": "问同学、翻书、搜网页", "level": 1 },
+        { "key": "D", "text": "没想到这种事也能问 AI", "level": 0 }
+      ]
+    },
+    {
+      "id": "q1-3",
+      "layer": 1,
+      "kind": "情境",
+      "scene": "明天要交一份 3000 字的读书报告。你第一步——",
+      "options": [
+        { "key": "A", "text": "直接让它写完，再改改", "level": 1 },
+        { "key": "B", "text": "让它先列三个提纲，自己挑一个再让它扩写", "level": 2 },
+        { "key": "C", "text": "先自己列提纲，再让它扩写", "level": 3 },
+        { "key": "D", "text": "先读原书做笔记，再决定要不要用它", "level": 4 }
+      ]
+    },
+    {
+      "id": "q2-1",
+      "layer": 2,
+      "kind": "认知",
+      "scene": "AI 对话框里“传文件”这个功能，你——",
+      "options": [
+        { "key": "A", "text": "经常用，还会追问文件里某一页讲了什么", "level": 3 },
+        { "key": "B", "text": "传过，也问过里面的内容", "level": 2 },
+        { "key": "C", "text": "试过，但没成功，或者传上去它没看懂", "level": 1 },
+        { "key": "D", "text": "不知道还能传文件", "level": 0 }
+      ]
+    },
+    {
+      "id": "q2-2",
+      "layer": 2,
+      "kind": "行为",
+      "scene": "老师发来一份 40 页的 PDF，你想让 AI 帮你总结——",
+      "options": [
+        { "key": "A", "text": "复制几段粘进去问", "level": 1 },
+        { "key": "B", "text": "把整份传进去，让它总结", "level": 2 },
+        { "key": "C", "text": "传进去，再让它把某一章单独讲一遍", "level": 3 },
+        { "key": "D", "text": "传进去，让它每条结论标出对应页码", "level": 4 }
+      ]
+    },
+    {
+      "id": "q2-3",
+      "layer": 2,
+      "kind": "情境",
+      "scene": "你让 AI 总结课件，它答得很笼统。你——",
+      "options": [
+        { "key": "A", "text": "换个问法再问一次", "level": 1 },
+        { "key": "B", "text": "追问“第三部分到底讲了什么”", "level": 2 },
+        { "key": "C", "text": "把课件重新传一遍，指明页码范围再问", "level": 3 },
+        { "key": "D", "text": "算了，自己看", "level": 0 }
+      ]
+    },
+    {
+      "id": "q3-1",
+      "layer": 3,
+      "kind": "认知",
+      "scene": "“MCP”这个词，你——",
+      "options": [
+        { "key": "A", "text": "装过，现在还在用", "level": 4 },
+        { "key": "B", "text": "知道大概是给 AI 接工具的协议", "level": 3 },
+        { "key": "C", "text": "听过，不知道干嘛的", "level": 1 },
+        { "key": "D", "text": "没听过", "level": 0 }
+      ]
+    },
+    {
+      "id": "q3-2",
+      "layer": 3,
+      "kind": "行为",
+      "scene": "你让它读你电脑里的一个文件，它说读不到。你——",
+      "options": [
+        { "key": "A", "text": "把文件内容复制粘贴进去", "level": 1 },
+        { "key": "B", "text": "换一个能读本地文件的工具", "level": 3 },
+        { "key": "C", "text": "给它装一个文件系统的 MCP", "level": 3 },
+        { "key": "D", "text": "自己写个脚本把内容喂给它", "level": 4 }
+      ]
+    },
+    {
+      "id": "q3-3",
+      "layer": 3,
+      "kind": "情境",
+      "scene": "你想让 AI 直接改你项目里的一个文件。第一步——",
+      "options": [
+        { "key": "A", "text": "复制文件内容给它，让它给个改好的版本", "level": 1 },
+        { "key": "B", "text": "用 Cursor 打开这个文件夹，直接让它改", "level": 3 },
+        { "key": "C", "text": "装 Cherry Studio，配一个能读写文件的 MCP", "level": 3 },
+        { "key": "D", "text": "让它给一段命令，自己复制去终端跑", "level": 2 }
+      ]
+    },
+    {
+      "id": "q4-1",
+      "layer": 4,
+      "kind": "认知",
+      "scene": "n8n、Dify、Coze 这类工具，你——",
+      "options": [
+        { "key": "A", "text": "搭过一条能跑起来的流", "level": 4 },
+        { "key": "B", "text": "打开看过，没搭成", "level": 3 },
+        { "key": "C", "text": "听过名字", "level": 1 },
+        { "key": "D", "text": "没听过", "level": 0 }
+      ]
+    },
+    {
+      "id": "q4-2",
+      "layer": 4,
+      "kind": "行为",
+      "scene": "每天早上想知道今天什么天气、有什么课，你——",
+      "options": [
+        { "key": "A", "text": "每天手动问一次", "level": 1 },
+        { "key": "B", "text": "让它记住，每天问一句“今天”", "level": 1 },
+        { "key": "C", "text": "写了个脚本，定时跑", "level": 3 },
+        { "key": "D", "text": "搭过一条自动跑的流", "level": 4 }
+      ]
+    },
+    {
+      "id": "q4-3",
+      "layer": 4,
+      "kind": "情境",
+      "scene": "社团每周要发一篇推文，你想让 AI 帮忙。你——",
+      "options": [
+        { "key": "A", "text": "每次手动让它写", "level": 1 },
+        { "key": "B", "text": "把一套固定提示词存下来，每次粘贴", "level": 2 },
+        { "key": "C", "text": "用 Coze 做一个 bot，把模板固定进去", "level": 3 },
+        { "key": "D", "text": "搭一条从选题到初稿的工作流", "level": 4 }
+      ]
+    }
+  ]
+}

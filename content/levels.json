@@ -1,0 +1,130 @@
+[
+  {
+    "id": 1,
+    "name": "火种",
+    "canDo": "会聊天",
+    "line": "你把火带回来了",
+    "person": "你室友，上周第一次拿它改简历",
+    "color": "#E8502E",
+    "cardTitle": "先开口",
+    "cardCanDo": "把脑子里的事说清楚，让它给你一个能用的答案。",
+    "entries": [
+      {
+        "name": "DeepSeek 网页版 / App",
+        "why": "免费，中文好，适合日常问",
+        "howTo": "搜 deepseek.com，微信或手机号登录，直接开对话框"
+      },
+      {
+        "name": "豆包",
+        "why": "能打电话式对话，适合懒的时候",
+        "howTo": "应用商店搜豆包，装完直接按住说话"
+      },
+      {
+        "name": "Kimi",
+        "why": "长文档强，适合扔一本书进去问",
+        "howTo": "搜 kimi.moonshot.cn，传 PDF 直接问"
+      }
+    ],
+    "fiveMinuteTask": "把明天要交的作业题目拍照发进去，问“这题考什么知识点，给我三个提示，不要给答案”。",
+    "done": "问它了明天那几道作业题",
+    "pitfall": "它答得越顺，越可能是在编。凡是数字、人名、书名，都要单独查。",
+    "pitfallFirst": true,
+    "whereToAsk": "问你们班那个已经在用的人。找不到就去 B 站搜“DeepSeek 新手”，别看超过 20 分钟的视频。"
+  },
+  {
+    "id": 2,
+    "name": "篝火",
+    "canDo": "会喂料",
+    "line": "火堆大了，大家围着看同一份东西",
+    "person": "隔壁班那个总在群里丢 PDF 求总结的",
+    "color": "#FF8A3D",
+    "cardTitle": "喂料",
+    "cardCanDo": "让它看你自己的东西（课表、课件、论文），而不是只看它脑子里装的。",
+    "entries": [
+      {
+        "name": "文件上传",
+        "why": "DeepSeek / Kimi / 豆包都支持 PDF、Word、图片",
+        "howTo": "对话框左边点回形针，传完先问它“你看到了什么”"
+      },
+      {
+        "name": "联网搜索",
+        "why": "豆包、腾讯元宝、Kimi 都有开关，问时效性的东西必须开",
+        "howTo": "输入框上方拨到“联网”，再问"
+      },
+      {
+        "name": "长文档",
+        "why": "Kimi 一次能吞很长的文档，适合整本教材",
+        "howTo": "整份传进去，问的时候指明章节"
+      }
+    ],
+    "fiveMinuteTask": "把本学期课表截图发进去，问“按这份课表，我这周哪天最累，为什么”。",
+    "done": "让它看完了这周的课表",
+    "pitfall": "传了文件不等于它读懂了。先问它“你从我这份文件里看到了什么”，对不上就重传。",
+    "pitfallFirst": false,
+    "whereToAsk": "先问它自己——“你能看到我这份文件吗”，它答不上来就是没传进去。"
+  },
+  {
+    "id": 3,
+    "name": "火把",
+    "canDo": "会接工具",
+    "line": "火拿在手里，能照路，能引燃别的",
+    "person": "你们院那个用 Cursor 自动改代码格式的",
+    "color": "#FFD166",
+    "cardTitle": "接工具",
+    "cardCanDo": "让 AI 能读你电脑里的文件、能调你装好的软件、能用别人写好的技能包。",
+    "entries": [
+      {
+        "name": "Cherry Studio",
+        "why": "国产客户端，图形化装 MCP，对新手最友好",
+        "howTo": "官网下载 → 设置 → MCP → 添加"
+      },
+      {
+        "name": "Cursor",
+        "why": "写代码用，能读整个项目文件夹",
+        "howTo": "官网下载 → 打开文件夹 → 直接问"
+      },
+      {
+        "name": "Claude Desktop",
+        "why": "生态最全，但要会配 JSON",
+        "howTo": "装完改配置文件"
+      }
+    ],
+    "fiveMinuteTask": "装一个“文件系统” MCP，让它列出你 D 盘某个文件夹里有什么，再让它把其中一个文件重命名。",
+    "done": "让它读了你本地的文件",
+    "pitfall": "MCP 是给它开权限，别一上来就开整个 C 盘。",
+    "pitfallFirst": false,
+    "whereToAsk": "Cherry Studio 的 MCP 教程页；或者问那个已经在用 Cursor 的学长。"
+  },
+  {
+    "id": 4,
+    "name": "炉火",
+    "canDo": "会编排",
+    "line": "炉子架起来一直烧，不用守着",
+    "person": "没见过。据说有人在大三跑起来了",
+    "color": "#BFF3FF",
+    "cardTitle": "编排",
+    "cardCanDo": "把几步固定下来，让它自己跑，不用你一句句点。",
+    "entries": [
+      {
+        "name": "n8n",
+        "why": "拖拽式，本地能装，免费，社区节点多",
+        "howTo": "docker run 或 npm 装，浏览器打开 localhost:5678"
+      },
+      {
+        "name": "Dify",
+        "why": "做 AI 应用，带知识库和流程",
+        "howTo": "官网云版先用，跑通再本地部署"
+      },
+      {
+        "name": "Coze 扣子",
+        "why": "字节的，上手最快，适合做小工具",
+        "howTo": "coze.cn 注册，选 bot 模板"
+      }
+    ],
+    "fiveMinuteTask": "n8n 里搭一条流：每天 8 点读课表、抓天气，拼成一句话发给你。",
+    "done": "把两件事串成了一条流程",
+    "pitfall": "工作流跑通了不代表跑对了。先让它跑三天，每天看一眼结果。",
+    "pitfallFirst": false,
+    "whereToAsk": "n8n 社区论坛、Dify 文档；报错别自己猜，整段原文贴给 AI 让它解释。"
+  }
+]
