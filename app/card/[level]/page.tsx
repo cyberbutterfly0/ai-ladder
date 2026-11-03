@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import FireStage from "@/components/FireStage";
 import StepMap from "@/components/StepMap";
-import { loadProgress, markDone, setLevel, type Progress } from "@/lib/progress";
+import { loadProgress, markDone, setLevel, skipLevel, type Progress } from "@/lib/progress";
 import { FS, INK, LEVELS, levelOf } from "@/lib/theme";
 import { emptyProgress } from "@/lib/progress";
 
@@ -39,6 +39,7 @@ export default function CardPage() {
     >
       <StepMap
         current={p.current}
+        skipped={p.skipped}
         compact
         onPick={(l) => {
           setLevel(l);
@@ -191,6 +192,23 @@ export default function CardPage() {
                 这层还没点着。先把「{levelOf(p.current).name}」烧完。
               </span>
             )}
+
+            {unlocked && level < 4 && (
+              <button
+                type="button"
+                onClick={() => {
+                  const next = skipLevel(level, lv.name);
+                  setP(next);
+                  router.push("/");
+                }}
+                className="transition-opacity hover:opacity-80"
+                style={{ fontSize: FS.body, color: INK.faint }}
+                title="已经会了？跳过这一层，下次直接从下一层开始"
+              >
+                这层我会了，跳过
+              </button>
+            )}
+
             <Link
               href="/"
               style={{ fontSize: FS.body, color: INK.faint }}

@@ -6,6 +6,8 @@ export interface Ash {
 export interface Progress {
   current: number;
   passed: number[];
+  /** 直接跳过的层：不等于完成，台阶上显示「跳过了」 */
+  skipped: number[];
   recommended?: number;
   answers?: Record<string, string>;
   ashes: Ash[];
@@ -15,7 +17,7 @@ export interface Progress {
 const KEY = "ai-ladder:v1";
 
 export function emptyProgress(): Progress {
-  return { current: 1, passed: [], ashes: [] };
+  return { current: 1, passed: [], skipped: [], ashes: [] };
 }
 
 export function loadProgress(): Progress {
@@ -28,6 +30,7 @@ export function loadProgress(): Progress {
       ...emptyProgress(),
       ...parsed,
       passed: Array.isArray(parsed.passed) ? parsed.passed : [],
+      skipped: Array.isArray(parsed.skipped) ? parsed.skipped : [],
       ashes: Array.isArray(parsed.ashes) ? parsed.ashes : [],
       current:
         typeof parsed.current === "number" && parsed.current >= 1 && parsed.current <= 4
@@ -63,6 +66,23 @@ export function markDone(level: number, text: string): Progress {
     passed,
     current: Math.min(4, Math.max(p.current, level + 1)),
     ashes: [...p.ashes, { date: today(), text }],
+  };
+  saveProgress(next);
+  return next;
+}
+
+/**
+ * 跳过一层：不算完成，台阶上显示「跳过了」，下次直接从下一层开始。
+ * 已经会了的人不该被前面的内容卡着走一遍。
+ */
+export function skipLevel(level: number, name: string): Progress {
+  const p = loadProgress();
+  const skipped = Array.from(new Set([...p.skipped, level]));
+  const next: Progress = {
+    ...p,
+    skipped,
+    current: Math.min(4, Math.max(p.current, level + 1)),
+    ashes: [...p.ashes, { date: today(), text: `把「${name}」跳过了` }],
   };
   saveProgress(next);
   return next;

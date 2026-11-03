@@ -10,6 +10,7 @@ import {
   lastAction,
   loadProgress,
   setLevel,
+  skipLevel,
   type Progress,
 } from "@/lib/progress";
 
@@ -35,6 +36,7 @@ export default function Home() {
       {/* 台阶图：常驻导航，点哪层跳哪层 */}
       <StepMap
         current={p.current}
+        skipped={p.skipped}
         onPick={(level) => setP(setLevel(level))}
       />
 
@@ -94,7 +96,7 @@ export default function Home() {
             {lv.fiveMinuteTask}
           </p>
 
-          <div className="mt-7 flex items-center gap-4">
+          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
             <button
               type="button"
               onClick={() =>
@@ -110,6 +112,19 @@ export default function Home() {
             >
               {hasTested ? "继续这一层" : "开始"}
             </button>
+
+            {p.current < 4 && (
+              <button
+                type="button"
+                onClick={() => setP(skipLevel(p.current, lv.name))}
+                className="transition-opacity hover:opacity-80"
+                style={{ fontSize: FS.body, color: INK.faint }}
+                title="已经会了？跳过这一层，下次直接从下一层开始"
+              >
+                这层我会了，跳过
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => router.push("/glossary")}

@@ -2,7 +2,12 @@
 
 import { DUR, EASE, FS, INK, LEVELS } from "@/lib/theme";
 
-export function statusOf(id: number, current: number): string {
+export function statusOf(
+  id: number,
+  current: number,
+  skipped: number[] = []
+): string {
+  if (skipped.includes(id)) return "跳过了";
   if (id < current) return "烧过了";
   if (id === current) return "正在烧";
   return "还没点";
@@ -10,6 +15,8 @@ export function statusOf(id: number, current: number): string {
 
 interface Props {
   current: number;
+  /** 直接跳过的层，显示「跳过了」而不是「烧过了」 */
+  skipped?: number[];
   /** 可点：默认 true（台阶图同时是导航） */
   onPick?: (level: number) => void;
   /** 卡片页用紧凑版：不显示“每级一个人”那行 */
@@ -21,7 +28,12 @@ interface Props {
  * 状态词只用「烧过了 / 正在烧 / 还没点」，每级下面写一个具体的人。
  * 窄屏 2×2，否则四列会把层名挤成竖排。
  */
-export default function StepMap({ current, onPick, compact = false }: Props) {
+export default function StepMap({
+  current,
+  skipped = [],
+  onPick,
+  compact = false,
+}: Props) {
   return (
     <nav
       className="grid w-full auto-rows-fr grid-cols-2 gap-2 md:grid-cols-4"
@@ -29,7 +41,9 @@ export default function StepMap({ current, onPick, compact = false }: Props) {
     >
       {LEVELS.map((lv) => {
         const active = lv.id === current;
-        const passed = lv.id < current;
+        const skippedHere = skipped.includes(lv.id);
+        const passed = lv.id < current && !skippedHere;
+        const filled = passed || active;
 
         const content = (
           <>
@@ -38,11 +52,12 @@ export default function StepMap({ current, onPick, compact = false }: Props) {
                 aria-hidden
                 className="inline-block h-2 w-2 shrink-0 rounded-full"
                 style={{
-                  background: passed || active ? lv.color : "transparent",
+                  background: filled ? lv.color : "transparent",
                   boxShadow: active ? `0 0 10px ${lv.color}` : "none",
-                  border:
-                    passed || active
-                      ? "1px solid transparent"
+                  border: filled
+                    ? "1px solid transparent"
+                    : skippedHere
+                      ? `1px dashed ${lv.color}99`
                       : `1px solid ${lv.color}66`,
                   transition: `all ${DUR.step}ms ${EASE}`,
                 }}
@@ -53,7 +68,7 @@ export default function StepMap({ current, onPick, compact = false }: Props) {
                   fontSize: FS.name,
                   fontWeight: 600,
                   letterSpacing: "0.5px",
-                  color: passed || active ? INK.main : INK.faint,
+                  color: filled ? INK.main : skippedHere ? INK.sub : INK.faint,
                   transition: `color ${DUR.step}ms ${EASE}`,
                 }}
               >
@@ -70,7 +85,7 @@ export default function StepMap({ current, onPick, compact = false }: Props) {
                 opacity: active ? 0.9 : 0.55,
               }}
             >
-              {statusOf(lv.id, current)}
+              {statusOf(lv.id, current, skipped)}
             </span>
 
             {!compact && (
