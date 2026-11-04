@@ -98,8 +98,8 @@ await measure("/", 1440, 900, "home-1440");
 await measure("/", 390, 844, "home-390");
 await measure("/path", 1440, 900, "path-1440");
 await measure("/path", 390, 844, "path-390");
-await measure("/test", 1440, 900, "test-1440");
-await measure("/test", 390, 844, "test-390");
+await measure("/quiz", 1440, 900, "test-1440");
+await measure("/quiz", 390, 844, "test-390");
 await measure("/card/2", 1440, 900, "card-1440");
 await measure("/glossary", 1440, 900, "glossary-1440");
 await measureUnlocked("/card/1", 1440, 900, "card1-1440");
@@ -114,12 +114,10 @@ page.on("console", (m) => {
   if (m.type() === "error") errors.push(m.text());
 });
 
-await page.goto(BASE + "/test", { waitUntil: "networkidle" });
+await page.goto(BASE + "/quiz", { waitUntil: "networkidle" });
 for (let i = 0; i < 12; i++) {
   await page.locator("main section div button").first().click();
-  await page.waitForTimeout(140);
-  await page.locator("main footer button").click();
-  await page.waitForTimeout(240);
+  await page.waitForTimeout(420);
 }
 await page.waitForURL("**/result", { timeout: 8000 });
 await page.waitForTimeout(800);
@@ -135,22 +133,16 @@ await page.waitForTimeout(800);
 console.log("card url:", page.url());
 await page.screenshot({ path: `${SHOTS}/card-after.png` });
 
-// 卡片页：先交一句敷衍的，应该被拦下
-await page.locator("textarea").fill("我做了，挺好的");
-await page.getByRole("button", { name: "交一下" }).click();
-await page.waitForTimeout(2500);
-console.log(
-  "card reject:",
-  (await page.locator("main").innerText()).replace(/\n+/g, " | ").slice(-160)
-);
-await page.screenshot({ path: `${SHOTS}/card-reject.png` });
-
-// 再交具体的，应该过
-await page.locator("textarea").fill(
-  "我把明天要交的高数作业第三题拍照发进去了，它说这题考二次函数顶点式，给了三个提示：先配方、看对称轴位置、代回验证。没直接给答案。"
-);
-await page.getByRole("button", { name: "交一下" }).click();
-await page.waitForTimeout(3000);
+// 卡片页：三条自检全打勾 → 记下这件事（C 打底，不判好坏）
+const boxes = page.locator('input[type="checkbox"]');
+const boxCount = await boxes.count();
+const commitBtn = page.getByRole("button", { name: "记下这件事" });
+console.log("checkboxes:", boxCount, "| 未打勾时禁用:", await commitBtn.isDisabled());
+for (let k = 0; k < boxCount; k++) await boxes.nth(k).check();
+await page.waitForTimeout(200);
+console.log("全打勾后可点:", !(await commitBtn.isDisabled()));
+await commitBtn.click();
+await page.waitForTimeout(600);
 console.log(
   "card pass:",
   (await page.locator("main").innerText()).replace(/\n+/g, " | ").slice(-120)

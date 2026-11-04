@@ -8,10 +8,10 @@ import { loadProgress, saveProgress } from "@/lib/progress";
 import { DUR, EASE, FS, INK, PAD } from "@/lib/theme";
 
 /**
- * 08 第三节 4：全屏一题一屏，视觉中心上提。
- * 顶部 QUESTION 03 / 12 是倾斜读数；选项四条细线行，选中靠左侧 2px 竖线长出来。
+ * 08 第三节 4 + 13 第五节：全屏一题一屏，视觉中心上提。
+ * 选完停在选中态 160ms，然后自己进下一题，底部不放「下一步」按钮。
  */
-export default function TestPage() {
+export default function QuizPage() {
   const router = useRouter();
   const [i, setI] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -22,25 +22,31 @@ export default function TestPage() {
   const last = i + 1 >= total;
 
   function pick(key: string) {
+    if (picked) return;
     setPicked(key);
-    setAnswers([...answers.filter((a) => a.qid !== q.id), { qid: q.id, key }]);
-  }
+    const nextAnswers = [
+      ...answers.filter((a) => a.qid !== q.id),
+      { qid: q.id, key },
+    ];
+    setAnswers(nextAnswers);
 
-  function next() {
-    if (!picked) return;
-    if (last) {
-      const res = recommend(answers);
-      const p = loadProgress();
-      saveProgress({
-        ...p,
-        answers: Object.fromEntries(answers.map((a) => [a.qid, a.key])),
-        recommended: res.recommended,
-      });
-      router.push("/result");
-      return;
-    }
-    setI(i + 1);
-    setPicked(null);
+    window.setTimeout(() => {
+      if (last) {
+        const res = recommend(nextAnswers);
+        const p = loadProgress();
+        saveProgress({
+          ...p,
+          answers: Object.fromEntries(
+            nextAnswers.map((a) => [a.qid, a.key])
+          ),
+          recommended: res.recommended,
+        });
+        router.push("/result");
+        return;
+      }
+      setI(i + 1);
+      setPicked(null);
+    }, DUR.state * 2);
   }
 
   return (
@@ -48,7 +54,7 @@ export default function TestPage() {
       className={`mx-auto flex w-full max-w-[720px] flex-col ${PAD} py-6`}
       style={{ height: "100dvh" }}
     >
-      <header className="flex items-center justify-between">
+      <header className="flex items-baseline justify-between">
         <Link
           href="/"
           className="mono transition-opacity hover:opacity-70"
@@ -60,8 +66,8 @@ export default function TestPage() {
           className="mono"
           style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.6 }}
         >
-          <span className="readout" style={{ marginRight: 6 }}>
-            QUESTION {String(i + 1).padStart(2, "0")} / {total}
+          <span className="readout" style={{ marginRight: 8 }}>
+            {String(i + 1).padStart(2, "0")} / {total}
           </span>
           {q.kind}
         </span>
@@ -69,9 +75,9 @@ export default function TestPage() {
 
       <section className="flex min-h-0 flex-1 flex-col justify-center pb-16">
         <h1
+          className="serif"
           style={{
             fontSize: FS.title,
-            fontWeight: 500,
             lineHeight: 1.5,
             letterSpacing: "0.02em",
             marginBottom: 32,
@@ -146,22 +152,11 @@ export default function TestPage() {
         </div>
       </section>
 
-      <footer className="flex justify-end">
-        <button
-          type="button"
-          onClick={next}
-          disabled={!picked}
-          className="transition-opacity hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-25"
-          style={{
-            fontSize: FS.body,
-            color: INK.main,
-            opacity: 0.9,
-            paddingBottom: 3,
-            borderBottom: `1px solid ${INK.line2}`,
-          }}
-        >
-          {last ? "[ 看结果 ]" : "[ 下一题 ]"}
-        </button>
+      <footer
+        className="mono"
+        style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.55 }}
+      >
+        选一个就往下走
       </footer>
     </main>
   );

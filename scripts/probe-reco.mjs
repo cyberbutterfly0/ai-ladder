@@ -9,7 +9,7 @@ const browser = await chromium.launch({ executablePath: EXE, headless: true });
 async function run(label, pick) {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await ctx.newPage();
-  await page.goto(BASE + "/test", { waitUntil: "networkidle" });
+  await page.goto(BASE + "/quiz", { waitUntil: "networkidle" });
   for (let i = 0; i < 12; i++) {
     const btns = page.locator("main section button");
     const n = await btns.count();

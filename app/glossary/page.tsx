@@ -34,7 +34,7 @@ export default function GlossaryPage() {
         style={{
           fontSize: FS.micro,
           color: INK.sub,
-          opacity: 0.5,
+          opacity: 0.65,
           marginTop: 40,
           marginBottom: 0,
         }}
@@ -63,7 +63,7 @@ export default function GlossaryPage() {
               {it.tag === "加餐" && (
                 <span
                   className="mono"
-                  style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.5 }}
+                  style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.65 }}
                 >
                   加餐
                 </span>
@@ -88,7 +88,7 @@ export default function GlossaryPage() {
         style={{
           fontSize: FS.micro,
           color: INK.sub,
-          opacity: 0.4,
+          opacity: 0.6,
           marginTop: 24,
           lineHeight: 1.8,
         }}

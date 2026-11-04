@@ -2,21 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 08 第四节：死亡搁浅视觉规格。除火以外不出现第二种彩色。 */
+/* 13 号文件第四节：墨底、反白文字、发丝线。
+   08 的结构决策仍有效：零圆角、零边框、零阴影、火是唯一彩色。 */
 :root {
-  --bg: #07090e;
-  --surface: #0d1119;
-  --ink: #e6eaf0;
-  --ink-2: #7a8493;
-  --line: rgba(230, 236, 244, 0.1);
-  --line-2: rgba(230, 236, 244, 0.22);
+  /* 墨底与纸底 */
+  --bg: #141210;
+  --paper: #e8e2d4;
+  --surface: #1a1815;
+
+  /* 文字 */
+  --ink: #ede8dc;
+  --ink-2: #b3ada0;
+  --line: rgba(237, 232, 220, 0.12);
+  --line-2: rgba(237, 232, 220, 0.26);
+
+  /* 唯一强调色与描金 */
+  --accent: #a63b2a;
+  --gold: #c9a227;
 
   --fs-title: 20px;
+  --fs-level: 16px;
   --fs-body: 13px;
   --fs-note: 12px;
+  --fs-label: 11px;
   --fs-mono: 11px;
-  --fs-micro: 10px;
+  --fs-micro: 11px;
 
+  /* 13 号文件第二节：标题与层名用宋体，正文用黑体，全站不超过三种字 */
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
+    "SimSun", serif;
   --font-cn: "Noto Sans SC", "Source Han Sans SC", "PingFang SC",
     "Microsoft YaHei", sans-serif;
   --font-mono: "JetBrains Mono", "Cascadia Mono", Consolas, "Courier New",
@@ -66,12 +80,17 @@ button {
   cursor: pointer;
 }
 
-/* 等宽标注：全大写、字距放宽 */
+/* 宋体：只给层名和页面标题，13 号文件第二节 */
+.serif {
+  font-family: var(--font-serif);
+  font-weight: 600;
+}
+
+/* 等宽注记：13 号文件说不做全大写标签，只做小号注记 */
 .mono {
   font-family: var(--font-mono);
   font-weight: 400;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 /* 读数：等宽 + 倾斜。全站只有台阶序号、题号、得分数值三处用它 */

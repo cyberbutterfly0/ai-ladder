@@ -22,7 +22,7 @@ export default function ResultPage() {
       key,
     }));
     if (!answers.length) {
-      router.replace("/test");
+      router.replace("/quiz");
       return;
     }
     setRes(recommend(answers));
@@ -70,7 +70,7 @@ export default function ResultPage() {
           style={{
             fontSize: FS.micro,
             color: INK.sub,
-            opacity: 0.5,
+            opacity: 0.65,
             marginBottom: 16,
           }}
         >
@@ -203,7 +203,7 @@ export default function ResultPage() {
               >
                 <span
                   className="mono"
-                  style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.5 }}
+                  style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.65 }}
                 >
                   {String(l.id).padStart(2, "0")}
                 </span>
@@ -219,7 +219,7 @@ export default function ResultPage() {
 
       <footer
         className="mono"
-        style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.3 }}
+        style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.55 }}
       >
         推荐只是起点 · 台阶图随时能改
       </footer>

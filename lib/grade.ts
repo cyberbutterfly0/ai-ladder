@@ -83,7 +83,7 @@ export function buildPrompt(level: number, submission: string): string {
     .join("\n");
 
   return [
-    "你在给一个大一学生的「5 分钟练习」判分。只判断他有没有真的做，不评价文笔。",
+    "你在给一个大一学生的一层练习提参考意见。只判断他有没有真的做，不评价文笔。",
     "",
     `这一层的练习：${r.task}`,
     "",

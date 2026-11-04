@@ -57,7 +57,7 @@ export function setLevel(level: number): Progress {
   return next;
 }
 
-/** 完成一层的 5 分钟小事：记一笔灰烬，解锁下一层 */
+/** 完成一层：记一笔灰烬，解锁下一层 */
 export function markDone(level: number, text: string): Progress {
   const p = loadProgress();
   const passed = Array.from(new Set([...p.passed, level]));

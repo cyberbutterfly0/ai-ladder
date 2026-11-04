@@ -11,18 +11,22 @@ import {
   type Progress,
 } from "@/lib/progress";
 import type { GradeResult } from "@/lib/grade";
-import { FS, INK, LEVELS, PAD, levelOf } from "@/lib/theme";
+import { FS, INK, ACCENT, LEVELS, PAD, levelOf } from "@/lib/theme";
 
 /**
- * 08 第三节 3：细线分块，能干什么 20px 是这一页唯一大字，其余 13px。
- * 顶部只有「← 终端」和「02 / 篝火」，不放台阶图、不放火图。
+ * 12 号文件：层卡片 = 场景 / 动作 / 做完看到什么 / 自检三条。
+ * 验收改 C 打底——三条自检全部打勾才记「做过」，不声称「通过了」。
+ * 模型建议折叠在底部，标「仅供参考」，不影响解锁。
  */
 export default function CardPage() {
   const params = useParams<{ level: string }>();
   const router = useRouter();
   const [p, setP] = useState<Progress>(emptyProgress);
   const [ready, setReady] = useState(false);
+  const [ticked, setTicked] = useState<boolean[]>([false, false, false]);
+  const [saved, setSaved] = useState(false);
 
+  const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [judging, setJudging] = useState(false);
   const [res, setRes] = useState<GradeResult | null>(null);
@@ -44,8 +48,19 @@ export default function CardPage() {
   if (!valid) return null;
 
   const unlocked = ready && level <= p.current;
+  const allTicked = ticked.every(Boolean);
 
-  async function submit() {
+  function toggle(i: number) {
+    setTicked((t) => t.map((v, k) => (k === i ? !v : v)));
+  }
+
+  function commit() {
+    if (!allTicked) return;
+    setP(markDone(level, lv.done));
+    setSaved(true);
+  }
+
+  async function askModel() {
     const submission = text.trim();
     if (!submission || judging) return;
     setJudging(true);
@@ -63,9 +78,8 @@ export default function CardPage() {
         return;
       }
       setRes(j);
-      if (j.passed) setP(markDone(level, lv.done));
     } catch {
-      setErr("网络不通。先把做了什么写下来，等会儿再交。");
+      setErr("网络不通，等会儿再试。");
     } finally {
       setJudging(false);
     }
@@ -84,7 +98,7 @@ export default function CardPage() {
       className={`mx-auto w-full max-w-[720px] ${PAD} py-6`}
       style={{ minHeight: "100dvh" }}
     >
-      <header className="flex items-center justify-between">
+      <header className="flex items-baseline justify-between gap-4">
         <Link
           href="/"
           className="mono transition-opacity hover:opacity-70"
@@ -96,21 +110,22 @@ export default function CardPage() {
           <span className="readout" style={{ marginRight: 8, opacity: 0.8 }}>
             {String(level).padStart(2, "0")}
           </span>
-          {lv.name}
+          <span style={{ marginRight: 8 }}>{lv.name}</span>
+          {lv.de}
         </span>
       </header>
 
       <article style={{ marginTop: 56 }}>
         <p
           className="mono"
-          style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.5, margin: 0 }}
+          style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.65, margin: 0 }}
         >
           能干什么
         </p>
         <h1
+          className="serif"
           style={{
             fontSize: FS.title,
-            fontWeight: 500,
             letterSpacing: "0.02em",
             lineHeight: 1.4,
             marginTop: 10,
@@ -136,7 +151,7 @@ export default function CardPage() {
               >
                 <span
                   className="mono"
-                  style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.4, paddingTop: 2 }}
+                  style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.6, paddingTop: 2 }}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -154,8 +169,11 @@ export default function CardPage() {
           </ul>
         </Block>
 
-        <Block label="今天五分钟">
-          <ol style={{ listStyle: "none", margin: 0, padding: 0 }}>
+        <Block label="一次能做完的一件事">
+          <p style={{ fontSize: FS.body, lineHeight: 1.7, color: INK.main, margin: 0 }}>
+            {lv.task}
+          </p>
+          <ol style={{ listStyle: "none", margin: 0, padding: 0, marginTop: 14 }}>
             {lv.steps.map((s, i) => (
               <li
                 key={s}
@@ -168,7 +186,7 @@ export default function CardPage() {
               >
                 <span
                   className="mono"
-                  style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.4, paddingTop: 3 }}
+                  style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.6, paddingTop: 3 }}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -176,6 +194,12 @@ export default function CardPage() {
               </li>
             ))}
           </ol>
+        </Block>
+
+        <Block label="做完能看到什么">
+          <p style={{ fontSize: FS.body, lineHeight: 1.7, color: INK.sub, margin: 0 }}>
+            {lv.afterDo}
+          </p>
         </Block>
 
         {!lv.pitfallFirst && pitfall}
@@ -186,49 +210,53 @@ export default function CardPage() {
           </p>
         </Block>
 
-        <Block label="做完了？说说你刚才怎么做的">
-          {unlocked && !res?.passed ? (
-            <>
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                rows={3}
-                maxLength={2000}
-                placeholder="写清两件事：你做了什么、它回了什么。只写「我做了」会被拦下来。"
-                style={{
-                  width: "100%",
-                  resize: "vertical",
-                  fontSize: FS.body,
-                  lineHeight: 1.7,
-                  color: INK.main,
-                  background: "var(--surface)",
-                  border: 0,
-                  borderRadius: 0,
-                  padding: "12px 14px",
-                  fontFamily: "inherit",
-                  outline: "none",
-                }}
-              />
-              <p
-                className="mono"
-                style={{
-                  fontSize: FS.micro,
-                  color: INK.sub,
-                  opacity: 0.45,
-                  margin: "10px 0 0",
-                }}
-              >
-                只在你这台电脑上判断，不存原文
-                {text.length > 0 ? ` · ${text.length}/2000` : ""}
-              </p>
-            </>
-          ) : (
-            <p style={{ fontSize: FS.body, color: INK.sub, margin: 0, lineHeight: 1.7 }}>
-              {res?.passed
-                ? `记下来了：${lv.done}。`
-                : `这层还没点着。先把「${levelOf(p.current).name}」烧完。`}
-            </p>
-          )}
+        <Block label="自检三条，真的做到了再打勾">
+          <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+            {lv.check.map((c, i) => (
+              <li key={c} style={{ paddingTop: i === 0 ? 0 : 12 }}>
+                <label
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "18px 1fr",
+                    gap: 10,
+                    alignItems: "start",
+                    cursor: "pointer",
+                    fontSize: FS.body,
+                    lineHeight: 1.7,
+                    color: INK.main,
+                    opacity: ticked[i] ? 1 : 0.75,
+                    transition: `opacity var(--t-state) ease-out`,
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={ticked[i]}
+                    onChange={() => toggle(i)}
+                    disabled={!unlocked || saved}
+                    style={{
+                      width: 13,
+                      height: 13,
+                      marginTop: 4,
+                      accentColor: ACCENT,
+                      cursor: "pointer",
+                    }}
+                  />
+                  <span>{c}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+          <p
+            className="mono"
+            style={{
+              fontSize: FS.micro,
+              color: INK.sub,
+              opacity: 0.62,
+              margin: "14px 0 0",
+            }}
+          >
+            只记「做过」，不判「做好」。系统看不到你电脑上发生了什么，这三条你自己认。
+          </p>
         </Block>
 
         <div
@@ -237,14 +265,14 @@ export default function CardPage() {
             flexWrap: "wrap",
             alignItems: "center",
             gap: 24,
-            marginTop: 48,
+            marginTop: 40,
           }}
         >
           {!unlocked ? (
             <span style={{ fontSize: FS.body, color: INK.sub }}>
               这层还没点着。先把「{levelOf(p.current).name}」烧完。
             </span>
-          ) : res?.passed ? (
+          ) : saved ? (
             <>
               <span
                 style={{
@@ -260,7 +288,7 @@ export default function CardPage() {
                   className="inline-block rounded-full"
                   style={{ width: 6, height: 6, background: lv.color }}
                 />
-                过了。
+                记下了：{lv.done}。
               </span>
               {level < 4 && (
                 <Link
@@ -283,18 +311,18 @@ export default function CardPage() {
             <>
               <button
                 type="button"
-                onClick={submit}
-                disabled={!text.trim() || judging}
+                onClick={commit}
+                disabled={!allTicked}
                 className="transition-opacity hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-30"
                 style={{
                   fontSize: FS.body,
                   color: INK.main,
-                  opacity: 0.9,
+                  opacity: allTicked ? 0.95 : 0.3,
                   paddingBottom: 3,
-                  borderBottom: `1px solid ${INK.line2}`,
+                  borderBottom: `1px solid ${allTicked ? ACCENT : INK.line2}`,
                 }}
               >
-                {judging ? "看看…" : "[ 交一下 ]"}
+                [ 记下这件事 ]
               </button>
 
               {level < 4 && (
@@ -316,7 +344,7 @@ export default function CardPage() {
               <Link
                 href="/glossary"
                 className="transition-opacity hover:opacity-80"
-                style={{ fontSize: FS.note, color: INK.sub, opacity: 0.45 }}
+                style={{ fontSize: FS.note, color: INK.sub, opacity: 0.62 }}
               >
                 今天先看看
               </Link>
@@ -324,22 +352,77 @@ export default function CardPage() {
           )}
         </div>
 
-        {res && !res.passed && (
-          <p
-            style={{
-              fontSize: FS.body,
-              color: INK.main,
-              opacity: 0.85,
-              lineHeight: 1.7,
-              marginTop: 20,
-              marginBottom: 0,
-            }}
-          >
-            {res.nextStep}
-          </p>
-        )}
-        {err && (
-          <p style={{ fontSize: FS.note, color: INK.sub, marginTop: 12 }}>{err}</p>
+        {unlocked && !saved && (
+          <div style={{ marginTop: 28 }}>
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className="mono transition-opacity hover:opacity-80"
+              style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.65 }}
+            >
+              {open ? "收起" : "想让 AI 看一眼你写的？"}
+            </button>
+            {open && (
+              <>
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  rows={3}
+                  maxLength={2000}
+                  placeholder="写清两件事：你做了什么、它回了什么。"
+                  style={{
+                    width: "100%",
+                    resize: "vertical",
+                    marginTop: 12,
+                    fontSize: FS.body,
+                    lineHeight: 1.7,
+                    color: INK.main,
+                    background: "var(--surface)",
+                    border: 0,
+                    borderRadius: 0,
+                    padding: "12px 14px",
+                    fontFamily: "inherit",
+                    outline: "none",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={askModel}
+                  disabled={!text.trim() || judging}
+                  className="transition-opacity hover:opacity-100 disabled:opacity-30"
+                  style={{
+                    marginTop: 12,
+                    fontSize: FS.note,
+                    color: INK.main,
+                    opacity: 0.7,
+                    paddingBottom: 2,
+                    borderBottom: `1px solid ${INK.line2}`,
+                  }}
+                >
+                  {judging ? "看看…" : "看看"}
+                </button>
+                <p
+                  className="mono"
+                  style={{
+                    fontSize: FS.micro,
+                    color: INK.sub,
+                    opacity: 0.6,
+                    margin: "10px 0 0",
+                  }}
+                >
+                  模型判断不可靠（同一句话重跑结果会变），这里只作参考，不影响解锁
+                </p>
+                {res && (
+                  <p style={{ fontSize: FS.body, color: INK.main, opacity: 0.8, lineHeight: 1.7, marginTop: 12 }}>
+                    参考：{res.passed ? "看着像做到了。" : res.nextStep}
+                  </p>
+                )}
+                {err && (
+                  <p style={{ fontSize: FS.note, color: INK.sub, marginTop: 10 }}>{err}</p>
+                )}
+              </>
+            )}
+          </div>
         )}
       </article>
     </main>
@@ -353,7 +436,7 @@ function Block({ label, children }: { label: string; children: React.ReactNode }
       <div style={{ height: 1, background: INK.line, marginBottom: 16 }} />
       <p
         className="mono"
-        style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.5, margin: "0 0 14px" }}
+        style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.65, margin: "0 0 14px" }}
       >
         {label}
       </p>

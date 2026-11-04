@@ -1,19 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import FireStage from "@/components/FireStage";
-import { FS, INK, levelOf } from "@/lib/theme";
 import {
   emptyProgress,
   lastAction,
   loadProgress,
   type Progress,
 } from "@/lib/progress";
+import { FS, INK, PAD, levelOf } from "@/lib/theme";
 
 /**
- * 08 第三节 1：终端接入。
- * 没有大标题、没有副标题、没有台阶图。火是唯一有颜色的东西。
+ * 12 号文件：入口 = 两条线选择 + 当前层。
+ * 08 的结构保留：没有大标题、没有副标题、没有台阶图，火是唯一有颜色的东西。
  */
 export default function Home() {
   const router = useRouter();
@@ -27,39 +28,50 @@ export default function Home() {
 
   const lv = levelOf(p.current);
   const last = lastAction(p);
-  const hasTested = Boolean(p.answers && Object.keys(p.answers).length);
+  const hasTested = Boolean(p.recommended);
 
   return (
     <main
-      className="mx-auto flex w-full max-w-[720px] flex-col px-6 py-6 md:px-12"
-      style={{ minHeight: "100dvh" }}
+      className={`mx-auto flex min-h-[100dvh] w-full max-w-[720px] flex-col ${PAD}`}
     >
       <header
-        className="mono flex items-center justify-between"
-        style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.35 }}
+        className="mono flex items-baseline justify-between"
+        style={{ paddingTop: 28, fontSize: FS.micro, color: INK.sub, opacity: 0.62 }}
       >
-        <span>AI LADDER / TERMINAL 01 / HDU</span>
+        <span>AI 阶梯 / 终端 01 / 杭电</span>
         <span>2026.11</span>
       </header>
 
-      {/* 08 第一节：火 220×293 居中偏上 */}
       <section
         className="flex flex-1 flex-col items-center justify-center"
-        style={{ paddingBottom: "10vh" }}
+        style={{ paddingBottom: "8vh" }}
       >
-        <FireStage color={lv.color} />
+        <FireStage level={lv.id} color={lv.color} />
 
-        <h1
+        <p
+          className="serif"
           style={{
-            fontSize: FS.title,
-            fontWeight: 500,
-            letterSpacing: "0.02em",
+            fontSize: FS.level,
+            letterSpacing: "0.5px",
             marginTop: 40,
-            lineHeight: 1.3,
+            marginBottom: 0,
           }}
         >
           {lv.name}
-        </h1>
+        </p>
+
+        <p
+          className="mono"
+          style={{
+            fontSize: FS.micro,
+            color: INK.sub,
+            opacity: 0.8,
+            marginTop: 8,
+            marginBottom: 0,
+          }}
+        >
+          {lv.de}
+        </p>
 
         <p
           style={{
@@ -67,6 +79,7 @@ export default function Home() {
             color: INK.main,
             opacity: 0.7,
             marginTop: 12,
+            marginBottom: 0,
             textAlign: "center",
             maxWidth: 340,
           }}
@@ -74,54 +87,82 @@ export default function Home() {
           {ready && last ? `你上次${last}` : lv.line}
         </p>
 
-        <button
-          type="button"
-          onClick={() =>
-            router.push(hasTested ? `/card/${p.current}` : "/test")
-          }
-          className="transition-opacity hover:opacity-100"
+        {/* 12 号文件第二节：两条线，是两种需求，不是深浅 */}
+        <div
           style={{
-            marginTop: 40,
-            fontSize: FS.body,
-            color: INK.main,
-            opacity: 0.9,
-            paddingBottom: 4,
-            borderBottom: `1px solid ${INK.line2}`,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 18,
+            marginTop: 44,
           }}
         >
-          [ 今天做一件小事 ]
-        </button>
+          <button
+            type="button"
+            onClick={() =>
+              router.push(hasTested ? `/card/${p.current}` : "/card/1")
+            }
+            className="transition-opacity hover:opacity-100"
+            style={{
+              fontSize: FS.body,
+              color: INK.main,
+              opacity: 0.92,
+              paddingBottom: 4,
+              borderBottom: `1px solid ${INK.line2}`,
+            }}
+          >
+            让它干活
+          </button>
 
-        <button
-          type="button"
-          onClick={() => router.push("/glossary")}
-          className="transition-opacity hover:opacity-90"
+          <Link
+            href="/principles"
+            className="transition-opacity hover:opacity-100"
+            style={{
+              fontSize: FS.body,
+              color: INK.main,
+              opacity: 0.72,
+              paddingBottom: 4,
+              borderBottom: `1px solid ${INK.line}`,
+            }}
+          >
+            想先搞懂它为什么这样
+          </Link>
+        </div>
+
+        <p
+          className="mono"
           style={{
-            marginTop: 16,
-            fontSize: FS.note,
-            color: INK.main,
-            opacity: 0.45,
+            fontSize: FS.micro,
+            color: INK.sub,
+            opacity: 0.68,
+            marginTop: 26,
+            marginBottom: 0,
           }}
         >
-          今天先看看
-        </button>
+          <Link href="/quiz" className="hover:opacity-100">
+            {hasTested ? "再答一遍 12 题" : "不知道从哪层开始？先答 12 题"}
+          </Link>
+        </p>
       </section>
 
-      <footer className="flex items-end justify-between gap-4">
-        <span
-          className="mono"
-          style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.3 }}
-        >
-          从借火到生火 · 杭州电子科技大学
+      <footer
+        className="mono flex items-baseline justify-between"
+        style={{
+          paddingBottom: 28,
+          fontSize: FS.micro,
+          color: INK.sub,
+          opacity: 0.55,
+        }}
+      >
+        <span>从借火到生火 · 杭州电子科技大学</span>
+        <span style={{ display: "flex", gap: 16 }}>
+          <Link href="/glossary" className="hover:opacity-100">
+            黑话
+          </Link>
+          <Link href="/path" className="hover:opacity-100">
+            四层 →
+          </Link>
         </span>
-        <button
-          type="button"
-          onClick={() => router.push("/path")}
-          className="mono transition-opacity hover:opacity-70"
-          style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.35 }}
-        >
-          四层 →
-        </button>
       </footer>
     </main>
   );

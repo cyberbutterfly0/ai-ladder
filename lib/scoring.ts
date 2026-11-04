@@ -83,6 +83,6 @@ export function recommend(answers: Answer[]): Result {
 
 /** 结果页拿这一句当推荐语，先认怂 */
 export function recommendLine(level: number): string {
-  const lv = { 1: "火种", 2: "篝火", 3: "火把", 4: "炉火" }[level] ?? "火种";
-  return `你大概在 L${level} ${lv}。猜的。`;
+  const name = { 1: "星火", 2: "薪火", 3: "举火", 4: "炉火" }[level] ?? "星火";
+  return `你大概在 L${level} ${name}。猜的。`;
 }
