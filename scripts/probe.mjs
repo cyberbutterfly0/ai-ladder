@@ -69,12 +69,41 @@ async function measure(path, w, h, name) {
   return r;
 }
 
+// 已解锁状态的卡片页：先注入进度再进页面
+async function measureUnlocked(path, w, h, name) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: h } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/", { waitUntil: "domcontentloaded" });
+  await page.evaluate(() =>
+    localStorage.setItem(
+      "ai-ladder:v1",
+      JSON.stringify({
+        current: 2,
+        passed: [1],
+        skipped: [],
+        ashes: [{ date: "11/03", text: "问它了明天那几道作业题" }],
+      })
+    )
+  );
+  await page.goto(BASE + path, { waitUntil: "networkidle" });
+  await page.waitForTimeout(700);
+  const r = await page.evaluate(probe);
+  await page.screenshot({ path: `${SHOTS}/${name}.png` });
+  console.log(name, JSON.stringify(r));
+  await ctx.close();
+  return r;
+}
+
 await measure("/", 1440, 900, "home-1440");
 await measure("/", 390, 844, "home-390");
+await measure("/path", 1440, 900, "path-1440");
+await measure("/path", 390, 844, "path-390");
 await measure("/test", 1440, 900, "test-1440");
 await measure("/test", 390, 844, "test-390");
 await measure("/card/2", 1440, 900, "card-1440");
 await measure("/glossary", 1440, 900, "glossary-1440");
+await measureUnlocked("/card/1", 1440, 900, "card1-1440");
+await measureUnlocked("/card/1", 390, 844, "card1-390");
 
 // 走一遍完整流程：12 题 → 结果 → 卡片 → 我做到了 → 首页
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
@@ -87,10 +116,13 @@ page.on("console", (m) => {
 
 await page.goto(BASE + "/test", { waitUntil: "networkidle" });
 for (let i = 0; i < 12; i++) {
-  await page.locator("main section button").first().click();
-  await page.waitForTimeout(320);
+  await page.locator("main section div button").first().click();
+  await page.waitForTimeout(140);
+  await page.locator("main footer button").click();
+  await page.waitForTimeout(240);
 }
 await page.waitForURL("**/result", { timeout: 8000 });
+await page.waitForTimeout(800);
 console.log("result url:", page.url());
 console.log(
   "result text:",
@@ -98,12 +130,34 @@ console.log(
 );
 await page.screenshot({ path: `${SHOTS}/result.png` });
 
-await page.getByRole("button", { name: "就按这个" }).click();
+await page.getByRole("button", { name: "去这层看看" }).click();
 await page.waitForTimeout(800);
 console.log("card url:", page.url());
 await page.screenshot({ path: `${SHOTS}/card-after.png` });
 
-await page.getByRole("button", { name: "我做到了" }).click();
+// 卡片页：先交一句敷衍的，应该被拦下
+await page.locator("textarea").fill("我做了，挺好的");
+await page.getByRole("button", { name: "交一下" }).click();
+await page.waitForTimeout(2500);
+console.log(
+  "card reject:",
+  (await page.locator("main").innerText()).replace(/\n+/g, " | ").slice(-160)
+);
+await page.screenshot({ path: `${SHOTS}/card-reject.png` });
+
+// 再交具体的，应该过
+await page.locator("textarea").fill(
+  "我把明天要交的高数作业第三题拍照发进去了，它说这题考二次函数顶点式，给了三个提示：先配方、看对称轴位置、代回验证。没直接给答案。"
+);
+await page.getByRole("button", { name: "交一下" }).click();
+await page.waitForTimeout(3000);
+console.log(
+  "card pass:",
+  (await page.locator("main").innerText()).replace(/\n+/g, " | ").slice(-120)
+);
+await page.screenshot({ path: `${SHOTS}/card-pass.png` });
+
+await page.getByRole("link", { name: "回终端看火" }).click();
 await page.waitForTimeout(1200);
 console.log("after done url:", page.url());
 console.log(

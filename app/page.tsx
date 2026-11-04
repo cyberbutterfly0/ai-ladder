@@ -3,17 +3,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import FireStage from "@/components/FireStage";
-import StepMap from "@/components/StepMap";
 import { FS, INK, levelOf } from "@/lib/theme";
 import {
   emptyProgress,
   lastAction,
   loadProgress,
-  setLevel,
-  skipLevel,
   type Progress,
 } from "@/lib/progress";
 
+/**
+ * 08 第三节 1：终端接入。
+ * 没有大标题、没有副标题、没有台阶图。火是唯一有颜色的东西。
+ */
 export default function Home() {
   const router = useRouter();
   const [p, setP] = useState<Progress>(emptyProgress);
@@ -30,123 +31,97 @@ export default function Home() {
 
   return (
     <main
-      className="mx-auto flex w-full max-w-[1080px] flex-col gap-3 px-5 py-5"
-      style={{ height: "100dvh" }}
+      className="mx-auto flex w-full max-w-[720px] flex-col px-6 py-6 md:px-12"
+      style={{ minHeight: "100dvh" }}
     >
-      {/* 台阶图：常驻导航，点哪层跳哪层 */}
-      <StepMap
-        current={p.current}
-        skipped={p.skipped}
-        onPick={(level) => setP(setLevel(level))}
-      />
+      <header
+        className="mono flex items-center justify-between"
+        style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.35 }}
+      >
+        <span>AI LADDER / TERMINAL 01 / HDU</span>
+        <span>2026.11</span>
+      </header>
 
-      {/* 首屏四物件：当前层名 / 一句“你上次做了什么” / 一个具体动作 / 一个按钮 */}
-      <section className="flex min-h-0 flex-1 flex-col items-center justify-center gap-5 md:flex-row md:gap-16">
-        <FireStage color={lv.color} level={lv.id} />
+      {/* 08 第一节：火 220×293 居中偏上 */}
+      <section
+        className="flex flex-1 flex-col items-center justify-center"
+        style={{ paddingBottom: "10vh" }}
+      >
+        <FireStage color={lv.color} />
 
-        <div className="w-full max-w-[420px]">
-          <h1
-            style={{
-              fontSize: FS.name,
-              fontWeight: 600,
-              letterSpacing: "0.5px",
-              color: INK.main,
-              margin: 0,
-            }}
-          >
-            {lv.name}
-          </h1>
+        <h1
+          style={{
+            fontSize: FS.title,
+            fontWeight: 500,
+            letterSpacing: "0.02em",
+            marginTop: 40,
+            lineHeight: 1.3,
+          }}
+        >
+          {lv.name}
+        </h1>
 
-          <p
-            style={{
-              fontSize: FS.line,
-              color: INK.sub,
-              marginTop: 6,
-              lineHeight: 1.65,
-            }}
-          >
-            {ready && last ? `你上次${last}` : lv.line}
-          </p>
+        <p
+          style={{
+            fontSize: FS.body,
+            color: INK.main,
+            opacity: 0.7,
+            marginTop: 12,
+            textAlign: "center",
+            maxWidth: 340,
+          }}
+        >
+          {ready && last ? `你上次${last}` : lv.line}
+        </p>
 
-          <div
-            style={{
-              height: 1,
-              background: INK.hair,
-              margin: "18px 0",
-            }}
-          />
+        <button
+          type="button"
+          onClick={() =>
+            router.push(hasTested ? `/card/${p.current}` : "/test")
+          }
+          className="transition-opacity hover:opacity-100"
+          style={{
+            marginTop: 40,
+            fontSize: FS.body,
+            color: INK.main,
+            opacity: 0.9,
+            paddingBottom: 4,
+            borderBottom: `1px solid ${INK.line2}`,
+          }}
+        >
+          [ 今天做一件小事 ]
+        </button>
 
-          <p
-            style={{
-              fontSize: FS.label,
-              letterSpacing: "1.5px",
-              color: "rgba(255,255,255,0.45)",
-              marginBottom: 8,
-            }}
-          >
-            今天可以做的
-          </p>
-          <p
-            style={{
-              fontSize: FS.body,
-              lineHeight: 1.65,
-              color: "rgba(255,255,255,0.78)",
-            }}
-          >
-            {lv.fiveMinuteTask}
-          </p>
-
-          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
-            <button
-              type="button"
-              onClick={() =>
-                router.push(hasTested ? `/card/${p.current}` : "/test")
-              }
-              className="rounded-md px-4 py-2 transition-opacity hover:opacity-90"
-              style={{
-                fontSize: FS.body,
-                background: lv.color,
-                color: "#0A1024",
-                fontWeight: 600,
-              }}
-            >
-              {hasTested ? "继续这一层" : "开始"}
-            </button>
-
-            {p.current < 4 && (
-              <button
-                type="button"
-                onClick={() => setP(skipLevel(p.current, lv.name))}
-                className="transition-opacity hover:opacity-80"
-                style={{ fontSize: FS.body, color: INK.faint }}
-                title="已经会了？跳过这一层，下次直接从下一层开始"
-              >
-                这层我会了，跳过
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={() => router.push("/glossary")}
-              className="transition-opacity hover:opacity-80"
-              style={{ fontSize: FS.body, color: INK.faint }}
-            >
-              今天先看看
-            </button>
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={() => router.push("/glossary")}
+          className="transition-opacity hover:opacity-90"
+          style={{
+            marginTop: 16,
+            fontSize: FS.note,
+            color: INK.main,
+            opacity: 0.45,
+          }}
+        >
+          今天先看看
+        </button>
       </section>
 
-      <footer
-        className="flex items-center justify-between"
-        style={{
-          fontSize: FS.label,
-          color: "rgba(255,255,255,0.3)",
-          letterSpacing: "0.5px",
-        }}
-      >
-        <span>从借火到生火</span>
-        <span>AI 阶梯 · 杭州电子科技大学</span>
+      <footer className="flex items-end justify-between gap-4">
+        <span
+          className="mono"
+          style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.3 }}
+        >
+          从借火到生火 · 杭州电子科技大学
+        </span>
+        <button
+          type="button"
+          onClick={() => router.push("/path")}
+          className="mono transition-opacity hover:opacity-70"
+          style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.35 }}
+        >
+          四层 →
+        </button>
       </footer>
     </main>
   );

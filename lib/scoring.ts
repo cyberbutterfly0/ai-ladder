@@ -33,6 +33,8 @@ export interface LayerScore {
   layer: number;
   hits: number;
   need: number;
+  /** 这一层一共几题，result 页显示 hits/total */
+  total: number;
 }
 
 export interface Result {
@@ -51,14 +53,16 @@ export function recommend(answers: Answer[]): Result {
 
   const scores: LayerScore[] = LAYERS.map((layer) => {
     let hits = 0;
+    let total = 0;
     for (const q of QUESTIONS) {
       if (q.layer !== layer) continue;
+      total += 1;
       const key = chosen.get(q.id);
       if (!key) continue;
       const opt = q.options.find((o) => o.key === key);
       if (opt && opt.level >= layer) hits += 1;
     }
-    return { layer, hits, need: PASS_NEED };
+    return { layer, hits, need: PASS_NEED, total };
   });
 
   const passedLayers = scores

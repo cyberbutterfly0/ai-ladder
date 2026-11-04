@@ -19,6 +19,8 @@ export interface Level {
   cardCanDo: string;
   entries: CardEntry[];
   fiveMinuteTask: string;
+  /** 08 第三节 3：5 分钟小事拆成 01 02 03 三步 */
+  steps: string[];
   /** 完成这层后写进灰烬账本的一句话，要能接在“你上次”后面 */
   done: string;
   pitfall: string;
@@ -32,32 +34,32 @@ export function levelOf(id: number): Level {
   return LEVELS.find((l) => l.id === id) ?? LEVELS[0];
 }
 
-/** 07 文件第二节的字号表：桌面 / 窄屏两档，统一走 CSS 变量 */
+/** 08 第四节的字号表：标题 20 / 正文 13 / 说明 12 / 等宽 11 / 微标注 10 */
 export const FS = {
-  hint: "var(--fs-hint)",
-  name: "var(--fs-name)",
-  line: "var(--fs-line)",
+  title: "var(--fs-title)",
   body: "var(--fs-body)",
-  label: "var(--fs-label)",
+  note: "var(--fs-note)",
   mono: "var(--fs-mono)",
+  micro: "var(--fs-micro)",
 } as const;
 
+/** 08 第四节的颜色表。主副文字之外一律用 opacity 表达层级。 */
 export const INK = {
-  main: "rgba(255,255,255,0.92)",
-  sub: "rgba(255,255,255,0.72)",
-  faint: "rgba(255,255,255,0.45)",
-  hair: "rgba(255,255,255,0.12)",
+  main: "#e6eaf0",
+  sub: "#7a8493",
+  line: "rgba(230,236,244,0.10)",
+  line2: "rgba(230,236,244,0.22)",
 } as const;
 
-/** 07 第五节/第六节：层间切换 600ms，进阶 900ms */
+/** 08 第四节动效表：进入 460 / 返回 360 / 台阶切换 500 / 状态 160 */
 export const DUR = {
-  switch: 600,
-  text: 400,
-  textDelay: 120,
-  body: 300,
-  bodyDelay: 240,
+  enter: 460,
+  back: 360,
   step: 500,
-  advance: 900,
+  state: 160,
 } as const;
 
-export const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+export const EASE = "cubic-bezier(0.2, 0, 0, 1)";
+
+/** 桌面 48px、手机 24px 的页面左右留白 */
+export const PAD = "px-6 md:px-12";

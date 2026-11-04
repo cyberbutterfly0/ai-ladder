@@ -2,33 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 08 第四节：死亡搁浅视觉规格。除火以外不出现第二种彩色。 */
 :root {
-  --bg-top: #0a1024;
-  --bg-bottom: #1b2e5a;
+  --bg: #07090e;
+  --surface: #0d1119;
+  --ink: #e6eaf0;
+  --ink-2: #7a8493;
+  --line: rgba(230, 236, 244, 0.1);
+  --line-2: rgba(230, 236, 244, 0.22);
 
-  /* 字号表先按 07 落成变量，具体档位等设计规范定稿再改 */
-  --fs-hint: 18px;
-  --fs-name: 16px;
-  --fs-line: 14px;
+  --fs-title: 20px;
   --fs-body: 13px;
-  --fs-label: 11px;
+  --fs-note: 12px;
   --fs-mono: 11px;
+  --fs-micro: 10px;
 
-  --ink: rgba(255, 255, 255, 0.92);
-  --ink-2: rgba(255, 255, 255, 0.72);
-  --ink-3: rgba(255, 255, 255, 0.45);
-  --hair: rgba(255, 255, 255, 0.12);
+  --font-cn: "Noto Sans SC", "Source Han Sans SC", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Mono", Consolas, "Courier New",
+    monospace;
+
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --t-enter: 460ms;
+  --t-back: 360ms;
+  --t-step: 500ms;
+  --t-state: 160ms;
 }
 
-@media (max-width: 1023px) {
-  :root {
-    --fs-hint: 16px;
-    --fs-name: 15px;
-    --fs-line: 13px;
-    --fs-body: 12px;
-    --fs-label: 10px;
-    --fs-mono: 10px;
-  }
+* {
+  box-sizing: border-box;
 }
 
 html,
@@ -37,42 +39,206 @@ body {
 }
 
 body {
-  background: linear-gradient(135deg, var(--bg-top), var(--bg-bottom));
-  background-attachment: fixed;
+  background: var(--bg);
   color: var(--ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-    "Microsoft YaHei", sans-serif;
+  font-family: var(--font-cn);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* 骨架阶段：火的位置只留一个占位框，不做形状、不做动画 */
+/* 零圆角：控件一律方角，点状标记自己用 .dot 绕开 */
+button,
+input,
+textarea,
+select {
+  border-radius: 0;
+  font-family: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* 等宽标注：全大写、字距放宽 */
+.mono {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* 读数：等宽 + 倾斜。全站只有台阶序号、题号、得分数值三处用它 */
+.readout {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  transform: skewX(-6deg);
+}
+
+.hair {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 0;
+}
+
+/* ---------- 火：唯一有颜色的东西 ---------- */
+
 .fire-stage {
   position: relative;
   flex: none;
-  width: 300px;
-  height: 400px; /* 3:4 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 220px;
+  height: 293px;
 }
 
-@media (max-width: 1023px) {
-  .fire-stage {
-    width: 200px;
-    height: 267px;
+.fire-glow {
+  position: absolute;
+  inset: 4% 0 24% 0;
+  background: radial-gradient(closest-side, var(--fire) 0%, transparent 72%);
+  opacity: 0.26;
+  filter: blur(26px);
+  animation: breathe 3.2s ease-in-out infinite;
+}
+
+.fire-core {
+  position: absolute;
+  left: 50%;
+  bottom: 26%;
+  width: 58px;
+  height: 104px;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse 55% 62% at 50% 68%,
+    #ffffff 0%,
+    var(--fire) 38%,
+    rgba(0, 0, 0, 0) 76%
+  );
+  border-radius: 50% 50% 38% 38% / 66% 66% 34% 34%;
+  filter: blur(7px);
+  animation: flicker 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.34;
+    transform: scale(1.06);
   }
 }
 
-.fire-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+@keyframes flicker {
+  0% {
+    transform: translateX(-50%) scale(1, 1);
+  }
+  100% {
+    transform: translateX(-50%) scale(0.96, 1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fire-glow,
+  .fire-core {
+    animation: none;
+  }
+}
+
+/* ---------- 台阶图：45° 斜线 ---------- */
+
+.step-path {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.step-path-line {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  border: 1px dashed rgba(255, 255, 255, 0.16);
-  border-radius: 10px;
-  color: rgba(255, 255, 255, 0.3);
-  font-size: var(--fs-label);
-  letter-spacing: 1px;
+  overflow: visible;
+}
+
+.step-node {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+  transform: translate(-5px, 5px);
+  text-align: left;
+  opacity: 0.55;
+  transition: opacity var(--t-state) ease-out;
+}
+
+.step-node:hover,
+.step-node[aria-current="step"] {
+  opacity: 1;
+}
+
+.step-dot {
+  display: block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transition: width var(--t-state) ease-out,
+    height var(--t-state) ease-out;
+}
+
+.step-node[aria-current="step"] .step-dot {
+  width: 12px;
+  height: 12px;
+}
+
+.step-text {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* 窄屏：台阶容器留出右侧文字的空间 */
+@media (max-width: 640px) {
+  .step-path {
+    max-width: 300px;
+  }
+  .step-text {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+/* 内容页淡入：08 的「进入层级 460ms」 */
+.page-enter {
+  animation: page-enter var(--t-enter) var(--ease) both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
 }

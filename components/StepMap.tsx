@@ -13,126 +13,110 @@ export function statusOf(
   return "还没点";
 }
 
+/** 四个点沿 45° 斜线从下往上：L1 左下 → L4 右上（百分比坐标） */
+const NODES = [
+  { x: 12, y: 88 },
+  { x: 37, y: 63 },
+  { x: 62, y: 38 },
+  { x: 87, y: 13 },
+];
+
 interface Props {
   current: number;
   /** 直接跳过的层，显示「跳过了」而不是「烧过了」 */
   skipped?: number[];
-  /** 可点：默认 true（台阶图同时是导航） */
+  /** 点了哪一层 = 镜头推近到该层；不传则不可点 */
   onPick?: (level: number) => void;
-  /** 卡片页用紧凑版：不显示“每级一个人”那行 */
-  compact?: boolean;
 }
 
 /**
- * 07 第七节：四级台阶，同时是导航。
- * 状态词只用「烧过了 / 正在烧 / 还没点」，每级下面写一个具体的人。
- * 窄屏 2×2，否则四列会把层名挤成竖排。
+ * 08 第二节：台阶图是独立页的导航，不是进度条。
+ * 四个火点、一条 1px 斜线（已走过实线 / 未走过 dash 4/6），点右侧层名 + 状态词。
+ * 不做百分比、不做进度条。
  */
-export default function StepMap({
-  current,
-  skipped = [],
-  onPick,
-  compact = false,
-}: Props) {
+export default function StepMap({ current, skipped = [], onPick }: Props) {
   return (
-    <nav
-      className="grid w-full auto-rows-fr grid-cols-2 gap-2 md:grid-cols-4"
-      aria-label="四级台阶"
-    >
-      {LEVELS.map((lv) => {
-        const active = lv.id === current;
-        const skippedHere = skipped.includes(lv.id);
-        const passed = lv.id < current && !skippedHere;
-        const filled = passed || active;
-
-        const content = (
-          <>
-            <span className="flex w-full items-center gap-1.5">
-              <span
-                aria-hidden
-                className="inline-block h-2 w-2 shrink-0 rounded-full"
-                style={{
-                  background: filled ? lv.color : "transparent",
-                  boxShadow: active ? `0 0 10px ${lv.color}` : "none",
-                  border: filled
-                    ? "1px solid transparent"
-                    : skippedHere
-                      ? `1px dashed ${lv.color}99`
-                      : `1px solid ${lv.color}66`,
-                  transition: `all ${DUR.step}ms ${EASE}`,
-                }}
-              />
-              <span
-                className="whitespace-nowrap"
-                style={{
-                  fontSize: FS.name,
-                  fontWeight: 600,
-                  letterSpacing: "0.5px",
-                  color: filled ? INK.main : skippedHere ? INK.sub : INK.faint,
-                  transition: `color ${DUR.step}ms ${EASE}`,
-                }}
-              >
-                {lv.name}
-              </span>
-            </span>
-
-            <span
-              className="whitespace-nowrap"
-              style={{
-                fontSize: FS.mono,
-                letterSpacing: "0.5px",
-                color: active ? lv.color : INK.faint,
-                opacity: active ? 0.9 : 0.55,
-              }}
-            >
-              {statusOf(lv.id, current, skipped)}
-            </span>
-
-            {!compact && (
-              <span
-                style={{
-                  fontSize: FS.label,
-                  color: INK.faint,
-                  lineHeight: 1.45,
-                  textAlign: "left",
-                }}
-              >
-                {lv.person}
-              </span>
-            )}
-          </>
-        );
-
-        const base =
-          "flex flex-col items-start gap-0.5 rounded-lg border px-2.5 py-2 text-left";
-        const style = {
-          borderColor: active ? lv.color : INK.hair,
-          background: active ? "rgba(255,255,255,0.04)" : "transparent",
-          boxShadow: active ? `0 0 18px -6px ${lv.color}` : "none",
-          transition: `border-color ${DUR.step}ms ${EASE}, background ${DUR.step}ms ${EASE}, box-shadow ${DUR.step}ms ${EASE}`,
-        } as const;
-
-        if (!onPick) {
+    <div className="step-path" role="navigation" aria-label="四级台阶">
+      <svg
+        className="step-path-line"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden
+      >
+        {NODES.slice(0, -1).map((a, i) => {
+          const b = NODES[i + 1];
+          const walked = i + 1 < current;
           return (
-            <div key={lv.id} className={base} style={style}>
-              {content}
-            </div>
+            <line
+              key={i}
+              x1={a.x}
+              y1={a.y}
+              x2={b.x}
+              y2={b.y}
+              stroke={walked ? INK.line2 : INK.line}
+              strokeWidth={0.25}
+              strokeDasharray={walked ? undefined : "1.2 1.8"}
+              style={{ transition: `stroke ${DUR.step}ms ${EASE}` }}
+            />
           );
-        }
+        })}
+      </svg>
+
+      {LEVELS.map((lv, i) => {
+        const pos = NODES[i];
+        const active = lv.id === current;
+        const passed = lv.id < current;
+        const skippedHere = skipped.includes(lv.id);
+        const lit = passed || active;
 
         return (
           <button
             key={lv.id}
             type="button"
-            onClick={() => onPick(lv.id)}
-            className={`${base} cursor-pointer`}
-            style={style}
+            className="step-node"
+            onClick={() => onPick?.(lv.id)}
+            style={{
+              left: `calc(${pos.x}% - 10px)`,
+              top: `calc(${pos.y}% - 10px)`,
+            }}
             aria-current={active ? "step" : undefined}
           >
-            {content}
+            <span
+              className="step-dot"
+              style={{
+                background: lit ? lv.color : "transparent",
+                border: lit
+                  ? "none"
+                  : skippedHere
+                    ? `1px dashed ${lv.color}`
+                    : `1px solid ${INK.line2}`,
+                boxShadow: active ? `0 0 12px ${lv.color}99` : "none",
+                transition: `all ${DUR.state}ms ease-out`,
+              }}
+            />
+            <span className="step-text">
+              <span
+                style={{
+                  fontSize: FS.body,
+                  fontWeight: 400,
+                  color: lit ? INK.main : INK.sub,
+                }}
+              >
+                {lv.name}
+              </span>
+              <span
+                className="mono"
+                style={{
+                  fontSize: FS.micro,
+                  color: active ? lv.color : INK.sub,
+                }}
+              >
+                {statusOf(lv.id, current, skipped)}
+              </span>
+            </span>
           </button>
         );
       })}
-    </nav>
+    </div>
   );
 }
