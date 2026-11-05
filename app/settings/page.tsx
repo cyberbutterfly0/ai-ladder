@@ -66,7 +66,12 @@ export default function SettingsPage() {
           <span className="level-track" aria-hidden />
           {LEVELS.map((l, i) => {
             const on = ready && p.current === l.id;
-            const open = ready && isUnlocked(l.id, p);
+            // 解锁限制：步骤条的通行做法是「前一步没完成就禁用后面的」，
+            // 见 17 号方案第 3 节的 Tchibo / Helsinki 规范。
+            // 这一版先关掉——展示阶段要让老师能一次点开四层看完内容。
+            // 恢复时把 LOCKED 改回 true 即可，下面一行不用动。
+            const LOCKED = false;
+            const open = ready && (!LOCKED || isUnlocked(l.id, p));
             return (
               <button
                 key={l.id}
