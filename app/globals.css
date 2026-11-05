@@ -47,6 +47,13 @@
   box-sizing: border-box;
 }
 
+/* 全站统一焦点环：描金 1px，替代浏览器默认蓝框。
+   :where() 把优先级压到 0，单个组件要覆盖不会被卡住。 */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 3px;
+}
+
 html,
 body {
   height: 100%;

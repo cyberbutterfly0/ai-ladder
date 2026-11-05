@@ -453,6 +453,31 @@ export default function CardPage() {
           </div>
         )}
       </article>
+
+      <p
+        className="mono"
+        style={{
+          fontSize: FS.micro,
+          color: INK.sub,
+          opacity: 0.55,
+          marginTop: 48,
+          marginBottom: 0,
+          textAlign: "center",
+        }}
+      >
+        <button
+          type="button"
+          className="sub-link"
+          onClick={() => {
+            const reduce = window.matchMedia(
+              "(prefers-reduced-motion: reduce)"
+            ).matches;
+            window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+          }}
+        >
+          ↑ 回上面
+        </button>
+      </p>
     </main>
   );
 }
