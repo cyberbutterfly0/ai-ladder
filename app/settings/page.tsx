@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FIRE_SRC } from "@/components/FireStage";
-import { FS, INK, LEVELS, PAD, levelOf } from "@/lib/theme";
+import { FS, INK, LEVELS, PAD } from "@/lib/theme";
 import {
   emptyProgress,
   loadProgress,
   setLevel,
   type Progress,
 } from "@/lib/progress";
+import { isUnlocked } from "@/lib/unlock";
 
 /**
  * 设置。取代原来首页底部的「四层 →」。
@@ -20,7 +19,6 @@ export default function SettingsPage() {
   const router = useRouter();
   const [p, setP] = useState<Progress>(emptyProgress);
   const [ready, setReady] = useState(false);
-  const cur = levelOf(p.current);
 
   useEffect(() => {
     setP(loadProgress());
@@ -68,56 +66,34 @@ export default function SettingsPage() {
           <span className="level-track" aria-hidden />
           {LEVELS.map((l, i) => {
             const on = ready && p.current === l.id;
+            const open = ready && isUnlocked(l.id, p);
             return (
               <button
                 key={l.id}
                 type="button"
                 onClick={() => setP(setLevel(l.id))}
-                className={`level-dot${on ? " is-on" : ""}`}
+                disabled={!open}
+                className={`level-dot${on ? " is-on" : ""}${open ? "" : " is-locked"}`}
                 style={{ left: `${((i + 0.5) / LEVELS.length) * 100}%` }}
                 aria-label={l.name}
                 aria-pressed={on}
               >
-                <span className="level-mark" aria-hidden />
+                <span
+                  className="level-mark"
+                  aria-hidden
+                  style={
+                    on
+                      ? {
+                          background: l.color,
+                          boxShadow: `0 0 8px 2px ${l.color}40`,
+                        }
+                      : undefined
+                  }
+                />
                 <span className="level-name">{l.name}</span>
               </button>
             );
           })}
-        </div>
-
-        <div className="level-preview">
-          <span
-            className="level-fire"
-            aria-hidden
-            style={{ backgroundImage: `url("${FIRE_SRC[cur.id]}")` }}
-          />
-          <div style={{ minWidth: 0 }}>
-            <p style={{ fontSize: FS.body, color: INK.main }}>
-              {cur.name} · {cur.canDo}
-            </p>
-            <p
-              style={{
-                marginTop: 6,
-                fontSize: FS.note,
-                color: INK.sub,
-                opacity: 0.85,
-              }}
-            >
-              {cur.line}
-            </p>
-            <Link
-              href={`/card/${cur.id}`}
-              className="sub-link"
-              style={{
-                display: "inline-block",
-                marginTop: 12,
-                fontSize: FS.note,
-                color: INK.main,
-              }}
-            >
-              进入这层 →
-            </Link>
-          </div>
         </div>
       </Group>
 

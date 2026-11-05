@@ -284,21 +284,17 @@ button {
   opacity: 1;
 }
 
-/* 设置页学习等级下方的当前层预览：火 + 层名 + 一句话 + 入口 */
-.level-preview {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-top: 24px;
+/* 还没解锁的层：保持可见，但不可点（步骤条通用做法） */
+.level-dot.is-locked {
+  cursor: default;
 }
 
-.level-fire {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  background-repeat: no-repeat;
-  background-size: 280%;
-  background-position: 50% 86%;
+.level-dot.is-locked .level-mark {
+  opacity: 0.18;
+}
+
+.level-dot.is-locked .level-name {
+  opacity: 0.32;
 }
 
 /* ---------- 火：唯一有颜色的东西 ---------- */

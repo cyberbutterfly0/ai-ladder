@@ -104,9 +104,7 @@ export default function Home() {
         >
           <button
             type="button"
-            onClick={() =>
-              router.push(hasTested ? `/card/${p.current}` : "/card/1")
-            }
+            onClick={() => router.push(`/card/${p.current}`)}
             className="entry-main entry-item"
           >
             <span className="serif">行</span>
