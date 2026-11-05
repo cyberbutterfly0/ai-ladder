@@ -284,6 +284,23 @@ button {
   opacity: 1;
 }
 
+/* 设置页学习等级下方的当前层预览：火 + 层名 + 一句话 + 入口 */
+.level-preview {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.level-fire {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  background-repeat: no-repeat;
+  background-size: 280%;
+  background-position: 50% 86%;
+}
+
 /* ---------- 火：唯一有颜色的东西 ---------- */
 
 .fire-stage {

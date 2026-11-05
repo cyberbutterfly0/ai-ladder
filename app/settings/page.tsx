@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FS, INK, LEVELS, PAD } from "@/lib/theme";
+import { FIRE_SRC } from "@/components/FireStage";
+import { FS, INK, LEVELS, PAD, levelOf } from "@/lib/theme";
 import {
   emptyProgress,
   loadProgress,
@@ -18,6 +20,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const [p, setP] = useState<Progress>(emptyProgress);
   const [ready, setReady] = useState(false);
+  const cur = levelOf(p.current);
 
   useEffect(() => {
     setP(loadProgress());
@@ -80,6 +83,41 @@ export default function SettingsPage() {
               </button>
             );
           })}
+        </div>
+
+        <div className="level-preview">
+          <span
+            className="level-fire"
+            aria-hidden
+            style={{ backgroundImage: `url("${FIRE_SRC[cur.id]}")` }}
+          />
+          <div style={{ minWidth: 0 }}>
+            <p style={{ fontSize: FS.body, color: INK.main }}>
+              {cur.name} · {cur.canDo}
+            </p>
+            <p
+              style={{
+                marginTop: 6,
+                fontSize: FS.note,
+                color: INK.sub,
+                opacity: 0.85,
+              }}
+            >
+              {cur.line}
+            </p>
+            <Link
+              href={`/card/${cur.id}`}
+              className="sub-link"
+              style={{
+                display: "inline-block",
+                marginTop: 12,
+                fontSize: FS.note,
+                color: INK.main,
+              }}
+            >
+              进入这层 →
+            </Link>
+          </div>
         </div>
       </Group>
 

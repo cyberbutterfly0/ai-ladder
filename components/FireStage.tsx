@@ -15,6 +15,9 @@ const SRC: Record<number, string> = {
   4: `${BASE}/fire/04-stove.png`,
 };
 
+/** 设置页的学习等级预览也用这份映射，避免两处各抄一遍文件名 */
+export const FIRE_SRC = SRC;
+
 export default function FireStage({
   level,
   color,
