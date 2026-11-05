@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
  * 火。14 号文件第三版：写意彩墨，四张图交叉淡入。
  * 容器 220×293（3:4），图 1:1 contain，火根在下三分之一，四层靠笔势和颜色递进。
  */
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const SRC: Record<number, string> = {
-  1: "/fire/01-star.png",
-  2: "/fire/02-fuel.png",
-  3: "/fire/03-torch.png",
-  4: "/fire/04-stove.png",
+  1: `${BASE}/fire/01-star.png`,
+  2: `${BASE}/fire/02-fuel.png`,
+  3: `${BASE}/fire/03-torch.png`,
+  4: `${BASE}/fire/04-stove.png`,
 };
 
 export default function FireStage({
