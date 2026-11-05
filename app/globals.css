@@ -134,26 +134,51 @@ button {
   width: 100%;
 }
 
-/* 知行：并排的两个入口，字放大到层名大小，内容居中 */
+/* 知行：并排的两个入口，字放大到层名大小，线左对齐不随交互移动 */
 .entry-item {
-  align-items: center;
+  align-items: flex-start;
   font-size: var(--fs-level);
 }
 
-/* AI 术语：比知行弱一级，靠常驻细线表示可点 */
-.term-link {
-  display: inline-block;
-  padding-bottom: 3px;
-  border-bottom: 1px solid var(--line);
-  opacity: 0.78;
-  transition: opacity var(--t-state) var(--ease),
-    border-color var(--t-state) var(--ease);
+/* 知行下的线：短，压在字的左下，hover 只把线拉长，字不动 */
+.entry-item .entry-rule {
+  width: 14px;
 }
 
-.term-link:hover,
-.term-link:focus-visible {
+.entry-item:hover .entry-rule,
+.entry-item:focus-visible .entry-rule {
+  width: 100%;
+}
+
+/* 次级链接（AI 术语 / 12 题 / 设置）：极细常驻线，hover 时两端各延长 4px */
+.sub-link {
+  position: relative;
+  display: inline-block;
+  transition: opacity var(--t-state) var(--ease);
+}
+
+.sub-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 1px;
+  background: var(--line);
+  transition: left var(--t-state) var(--ease), right var(--t-state) var(--ease),
+    background-color var(--t-state) var(--ease);
+}
+
+.sub-link:hover,
+.sub-link:focus-visible {
   opacity: 1;
-  border-bottom-color: var(--line-2);
+}
+
+.sub-link:hover::after,
+.sub-link:focus-visible::after {
+  left: -4px;
+  right: -4px;
+  background: var(--line-2);
 }
 
 /* 设置页：整行可点的条目，hover 只提亮标签 */
@@ -168,6 +193,72 @@ button {
 
 .row-link:hover .row-label,
 .row-link:focus-visible .row-label {
+  opacity: 1;
+}
+
+/* 学习等级：一条横线四个刻度，点哪个哪个亮 */
+.level-line {
+  position: relative;
+  margin: 30px 0 4px;
+  height: 46px;
+}
+
+.level-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 3px;
+  height: 1px;
+  background: var(--line-2);
+}
+
+.level-dot {
+  position: absolute;
+  top: -6px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px 8px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+.level-mark {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-2);
+  opacity: 0.3;
+  transition: opacity var(--t-state) var(--ease),
+    background-color var(--t-state) var(--ease),
+    box-shadow var(--t-state) var(--ease);
+}
+
+.level-dot:hover .level-mark,
+.level-dot:focus-visible .level-mark {
+  opacity: 0.65;
+}
+
+.level-dot.is-on .level-mark {
+  background: var(--gold);
+  opacity: 1;
+  box-shadow: 0 0 8px 2px rgba(201, 162, 39, 0.32);
+}
+
+.level-name {
+  font-size: var(--fs-label);
+  color: var(--ink-2);
+  opacity: 0.5;
+  transition: opacity var(--t-state) var(--ease),
+    color var(--t-state) var(--ease);
+}
+
+.level-dot.is-on .level-name {
+  color: var(--ink);
   opacity: 1;
 }
 

@@ -119,7 +119,7 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* AI 术语：比知行弱一级，但有下划线和 hover 反馈 */}
+        {/* AI 术语：比知行弱一级，细线常驻，hover 时两端略微延长 */}
         <p
           className="mono"
           style={{
@@ -128,7 +128,7 @@ export default function Home() {
             marginBottom: 0,
           }}
         >
-          <Link href="/glossary" className="term-link" style={{ color: INK.sub }}>
+          <Link href="/glossary" className="sub-link" style={{ color: INK.sub }}>
             AI 术语
           </Link>
         </p>
@@ -143,33 +143,38 @@ export default function Home() {
             marginBottom: 0,
           }}
         >
-          <Link href="/quiz" className="hover:opacity-100">
+          <Link href="/quiz" className="sub-link">
             {hasTested ? "再答一遍 12 题" : "不知道从哪层开始？先答 12 题"}
+          </Link>
+        </p>
+
+        <p
+          className="mono"
+          style={{
+            fontSize: FS.micro,
+            color: INK.sub,
+            opacity: 0.55,
+            marginTop: 18,
+            marginBottom: 0,
+          }}
+        >
+          <Link href="/settings" className="sub-link">
+            设置
           </Link>
         </p>
       </section>
 
       <footer
-        className="mono flex items-baseline justify-between"
+        className="mono text-center"
         style={{
           paddingBottom: 28,
           fontSize: FS.micro,
           color: INK.sub,
+          opacity: 0.55,
         }}
       >
-        <span style={{ opacity: 0.55, minWidth: 0, overflow: "hidden", whiteSpace: "nowrap" }}>
-          从借火到生火
-          <span className="footer-city"> · 杭州电子科技大学</span>
-        </span>
-        <span style={{ display: "flex", gap: 16 }}>
-          <Link
-            href="/settings"
-            style={{ opacity: 0.72 }}
-            className="hover:opacity-100"
-          >
-            设置
-          </Link>
-        </span>
+        从借火到生火
+        <span className="footer-city"> · 杭州电子科技大学</span>
       </footer>
     </main>
   );

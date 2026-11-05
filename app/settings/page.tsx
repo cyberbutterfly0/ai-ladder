@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FS, INK, LEVELS, PAD } from "@/lib/theme";
-import { emptyProgress, loadProgress, type Progress } from "@/lib/progress";
+import {
+  emptyProgress,
+  loadProgress,
+  setLevel,
+  type Progress,
+} from "@/lib/progress";
 
 /**
  * 设置。取代原来首页底部的「四层 →」。
@@ -57,17 +61,26 @@ export default function SettingsPage() {
       </Group>
 
       <Group label="学习等级">
-        {LEVELS.map((l) => (
-          <Link key={l.id} href={`/card/${l.id}`} className="row-link">
-            <Row
-              label={`${l.name} · ${l.canDo}`}
-              value={ready && p.current === l.id ? "当前" : "→"}
-            />
-          </Link>
-        ))}
-        <Link href="/path" className="row-link">
-          <Row label="四层台阶图" value="→" />
-        </Link>
+        <div className="level-line">
+          <span className="level-track" aria-hidden />
+          {LEVELS.map((l, i) => {
+            const on = ready && p.current === l.id;
+            return (
+              <button
+                key={l.id}
+                type="button"
+                onClick={() => setP(setLevel(l.id))}
+                className={`level-dot${on ? " is-on" : ""}`}
+                style={{ left: `${((i + 0.5) / LEVELS.length) * 100}%` }}
+                aria-label={l.name}
+                aria-pressed={on}
+              >
+                <span className="level-mark" aria-hidden />
+                <span className="level-name">{l.name}</span>
+              </button>
+            );
+          })}
+        </div>
       </Group>
 
       <Group label="API key">
