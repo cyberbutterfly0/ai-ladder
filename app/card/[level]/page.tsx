@@ -102,9 +102,15 @@ export default function CardPage() {
         <Link
           href="/"
           className="mono transition-opacity hover:opacity-70"
-          style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.6 }}
+          style={{
+            fontSize: FS.micro,
+            color: INK.sub,
+            opacity: 0.6,
+            padding: "12px 8px",
+            margin: "-12px -8px",
+          }}
         >
-          ← 终端
+          ← 返回
         </Link>
         <span className="mono" style={{ fontSize: FS.micro, color: INK.sub }}>
           <span className="readout" style={{ marginRight: 8, opacity: 0.8 }}>
@@ -304,7 +310,7 @@ export default function CardPage() {
                 className="transition-opacity hover:opacity-70"
                 style={{ fontSize: FS.body, color: INK.sub }}
               >
-                回终端看火
+                回去看火
               </Link>
             </>
           ) : (

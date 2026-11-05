@@ -23,9 +23,10 @@ export default function PrinciplesPage() {
         <button
           type="button"
           onClick={() => router.push("/")}
-          className="transition-opacity hover:opacity-70"
+          className="transition-opacity hover:opacity-100"
+          style={{ padding: "12px 8px", margin: "-12px -8px" }}
         >
-          ← 终端
+          ← 返回
         </button>
         <span>原理线 · 五个问题</span>
       </header>

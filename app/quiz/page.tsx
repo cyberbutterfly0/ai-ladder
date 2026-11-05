@@ -58,9 +58,15 @@ export default function QuizPage() {
         <Link
           href="/"
           className="mono transition-opacity hover:opacity-70"
-          style={{ fontSize: FS.micro, color: INK.sub, opacity: 0.6 }}
+          style={{
+            fontSize: FS.micro,
+            color: INK.sub,
+            opacity: 0.6,
+            padding: "12px 8px",
+            margin: "-12px -8px",
+          }}
         >
-          ← 终端
+          ← 返回
         </Link>
         <span
           className="mono"

@@ -108,6 +108,32 @@ button {
   margin: 0;
 }
 
+/* 15 号文件第九节：主入口。描金下划线 24px 起，hover 拉满；
+   上下各 12px padding，热区到 44px。描金不用朱砂——朱砂在墨底只有 2.92:1 */
+.entry-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px 0;
+  color: var(--ink);
+  font-size: var(--fs-body);
+  text-align: left;
+}
+
+.entry-rule {
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  transition: width var(--t-state) var(--ease);
+}
+
+.entry-main:hover .entry-rule,
+.entry-main:focus-visible .entry-rule {
+  width: 100%;
+}
+
 /* ---------- 火：唯一有颜色的东西 ---------- */
 
 .fire-stage {

@@ -36,10 +36,15 @@ export default function Home() {
     >
       <header
         className="mono flex items-baseline justify-between"
-        style={{ paddingTop: 28, fontSize: FS.micro, color: INK.sub, opacity: 0.62 }}
+        style={{
+          paddingTop: 28,
+          fontSize: FS.note,
+          color: INK.sub,
+          opacity: 0.75,
+        }}
       >
-        <span>AI 阶梯 / 终端 01 / 杭电</span>
-        <span>2026.11</span>
+        <span>AI 阶梯 · 杭电大一 AI 工具能力地图</span>
+        <span className="hidden min-[420px]:inline">2026.11</span>
       </header>
 
       <section
@@ -102,16 +107,10 @@ export default function Home() {
             onClick={() =>
               router.push(hasTested ? `/card/${p.current}` : "/card/1")
             }
-            className="transition-opacity hover:opacity-100"
-            style={{
-              fontSize: FS.body,
-              color: INK.main,
-              opacity: 0.92,
-              paddingBottom: 4,
-              borderBottom: `1px solid ${INK.line2}`,
-            }}
+            className="entry-main"
           >
-            让它干活
+            <span>让它干活 →</span>
+            <span className="entry-rule" aria-hidden />
           </button>
 
           <Link
