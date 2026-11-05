@@ -136,8 +136,16 @@ button {
 
 /* 知行：并排的两个入口，字放大到层名大小，线左对齐不随交互移动 */
 .entry-item {
+  position: relative;
   align-items: flex-start;
   font-size: var(--fs-level);
+}
+
+/* 透明热区：视觉不动，把可点范围撑到 44×44 以上（WCAG 2.2 AA 至少 24×24） */
+.entry-item::before {
+  content: "";
+  position: absolute;
+  inset: -12px -14px;
 }
 
 /* 知行下的线：短，压在字的左下，hover 只把线拉长，字不动 */
@@ -155,6 +163,13 @@ button {
   position: relative;
   display: inline-block;
   transition: opacity var(--t-state) var(--ease);
+}
+
+/* 透明热区：11–12px 高的文字行，可点范围补到 24px 以上 */
+.sub-link::before {
+  content: "";
+  position: absolute;
+  inset: -6px -8px;
 }
 
 .sub-link::after {
