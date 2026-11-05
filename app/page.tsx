@@ -92,13 +92,13 @@ export default function Home() {
           {ready && last ? `你上次${last}` : lv.line}
         </p>
 
-        {/* 12 号文件第二节：两条线，是两种需求，不是深浅 */}
+        {/* 知行：两个入口平级并排，同一强度的可点提示 */}
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 18,
+            alignItems: "flex-start",
+            justifyContent: "center",
+            gap: 64,
             marginTop: 44,
           }}
         >
@@ -107,26 +107,31 @@ export default function Home() {
             onClick={() =>
               router.push(hasTested ? `/card/${p.current}` : "/card/1")
             }
-            className="entry-main"
+            className="entry-main entry-item"
           >
-            <span>让它干活 →</span>
+            <span className="serif">行</span>
             <span className="entry-rule" aria-hidden />
           </button>
 
-          <Link
-            href="/principles"
-            className="transition-opacity hover:opacity-100"
-            style={{
-              fontSize: FS.body,
-              color: INK.main,
-              opacity: 0.72,
-              paddingBottom: 4,
-              borderBottom: `1px solid ${INK.line}`,
-            }}
-          >
-            想先搞懂它为什么这样
+          <Link href="/principles" className="entry-main entry-item">
+            <span className="serif">知</span>
+            <span className="entry-rule" aria-hidden />
           </Link>
         </div>
+
+        {/* AI 术语：比知行弱一级，但有下划线和 hover 反馈 */}
+        <p
+          className="mono"
+          style={{
+            fontSize: FS.note,
+            marginTop: 34,
+            marginBottom: 0,
+          }}
+        >
+          <Link href="/glossary" className="term-link" style={{ color: INK.sub }}>
+            AI 术语
+          </Link>
+        </p>
 
         <p
           className="mono"
@@ -150,16 +155,19 @@ export default function Home() {
           paddingBottom: 28,
           fontSize: FS.micro,
           color: INK.sub,
-          opacity: 0.55,
         }}
       >
-        <span>从借火到生火 · 杭州电子科技大学</span>
+        <span style={{ opacity: 0.55, minWidth: 0, overflow: "hidden", whiteSpace: "nowrap" }}>
+          从借火到生火
+          <span className="footer-city"> · 杭州电子科技大学</span>
+        </span>
         <span style={{ display: "flex", gap: 16 }}>
-          <Link href="/glossary" className="hover:opacity-100">
-            黑话
-          </Link>
-          <Link href="/path" className="hover:opacity-100">
-            四层 →
+          <Link
+            href="/settings"
+            style={{ opacity: 0.72 }}
+            className="hover:opacity-100"
+          >
+            设置
           </Link>
         </span>
       </footer>
